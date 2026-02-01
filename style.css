@@ -368,7 +368,7 @@ body {
     transform: scale(1.08);
 }
 
-/* --- CLEAR HISTORY ANIMATION --- */
+/* --- ADDED: CLEAR HISTORY SHAKE ANIMATION --- */
 @keyframes shake-pulse {
     0% { transform: scale(1); }
     25% { transform: scale(1.05) rotate(2deg); }
