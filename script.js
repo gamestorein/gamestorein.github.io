@@ -1,113 +1,139 @@
-// ================= MENU CONTROLS =================
 const sideMenu = document.getElementById("sideMenu");
 const overlay = document.getElementById("overlay");
-
-function toggleMenu() {
-    sideMenu.classList.add("active");
-    overlay.classList.add("active");
-}
-
-function closeMenu() {
-    sideMenu.classList.remove("active");
-    overlay.classList.remove("active");
-}
-
-// ================= APP DATA =================
 const appList = document.getElementById("appList");
-const allApps = Array.from(document.querySelectorAll(".app-card"));
+const sectionTitle = document.getElementById("section-title");
+const searchInput = document.getElementById("search");
 
-// ================= MENU FILTER =================
+// Initial capture of Android apps from the HTML
+const allAndroidApps = Array.from(document.querySelectorAll(".app-card"));
+
+// Windows Game Database
+const windowsGamesData = [
+    {
+        name: "Unavailable",
+        category: "Windows • ----",
+        img: "img/",
+        link: "files/"
+    },
+    {
+        name: "Unavailable",
+        category: "Windows • ----",
+        img: "img/",
+        link: "files/"
+    },
+];
+
+function createWinCard(game) {
+    const card = document.createElement("div");
+    card.className = "app-card";
+    card.innerHTML = `
+        <div class="app-visual"><img src="${game.img}" alt="${game.name}"></div>
+        <div class="app-details">
+            <h3>${game.name}</h3>
+            <span class="category">${game.category}</span>
+            <div class="actions"><a href="${game.link}" class="download-btn" download>Download</a></div>
+        </div>
+    `;
+    return card;
+}
+
+function resetAnimation(card, delay) {
+    card.style.animation = "none";
+    card.offsetHeight; 
+    card.style.animation = "fadeSlideUp 0.5s ease forwards";
+    card.style.animationDelay = `${delay * 0.05}s`;
+}
+
+// ================= NAVIGATION =================
 const menuItems = document.querySelectorAll(".menu-item");
-
 menuItems.forEach(item => {
     item.addEventListener("click", () => {
         menuItems.forEach(i => i.classList.remove("active"));
         item.classList.add("active");
+        searchInput.value = ""; 
 
         const text = item.innerText.trim().toLowerCase();
-        if (text === "android") showAndroid();
+        if (text === "home") showHome();
+        else if (text === "android") showAndroid();
         else if (text === "windows") showWindows();
-        else if (text === "top downloads") showDownloads();
-
+        else if (text === "downloads") showDownloads();
         closeMenu();
     });
 });
 
-function showAndroid() { renderApps(allApps); }
-
-function showWindows() {
-    appList.innerHTML = `
-        <div style="padding:40px;text-align:center;color:#64748b;">
-            <h3>No Windows games yet</h3>
-            <p>but soon......!</p>
-        </div>
-    `;
+function showHome() {
+    sectionTitle.innerText = "All Games&Apps";
+    appList.innerHTML = "";
+    allAndroidApps.forEach((app, i) => { app.style.display = "flex"; appList.appendChild(app); resetAnimation(app, i); });
+    windowsGamesData.forEach((game, i) => {
+        const card = createWinCard(game);
+        appList.appendChild(card);
+        resetAnimation(card, allAndroidApps.length + i);
+    });
 }
 
-// ================= DOWNLOAD TRACKING =================
-let downloadedApps = JSON.parse(localStorage.getItem("downloads")) || [];
-
-document.querySelectorAll(".download-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const card = btn.closest(".app-card");
-        const name = card.querySelector("h3").innerText;
-        downloadedApps = downloadedApps.filter(item => item !== name);
-        downloadedApps.push(name);
-        localStorage.setItem("downloads", JSON.stringify(downloadedApps));
-    });
-});
-
-// ================= DOWNLOADS TAB (ANIMATED) =================
-function showDownloads() {
+function showAndroid() {
+    sectionTitle.innerText = "📱 Games&Apps";
     appList.innerHTML = "";
-    const header = document.createElement("div");
-    header.style.cssText = "width:100%; display:flex; justify-content:flex-end; padding:0 10px 20px;";
+    allAndroidApps.forEach((app, i) => { app.style.display = "flex"; appList.appendChild(app); resetAnimation(app, i); });
+}
 
-    const clearBtn = document.createElement("button");
-    clearBtn.innerText = "Clear History";
-    clearBtn.className = "badge"; 
-    clearBtn.style.cssText = "border:1px solid var(--accent); cursor:pointer; background:transparent;";
-    
-    header.appendChild(clearBtn);
+function showWindows() {
+    sectionTitle.innerText = "💻 Games&Apps";
+    appList.innerHTML = "";
+    windowsGamesData.forEach((game, i) => {
+        const card = createWinCard(game);
+        appList.appendChild(card);
+        resetAnimation(card, i);
+    });
+}
+
+function showDownloads() {
+    sectionTitle.innerText = "Top Downloads";
+    appList.innerHTML = "";
+
+    // Header for Clear Button
+    const header = document.createElement("div");
+    header.style.cssText = "grid-column: 1/-1; display:flex; justify-content:flex-end; padding-bottom: 20px;";
+    header.innerHTML = `<button class="badge" id="clearBtn" style="cursor:pointer; border:1px solid var(--accent); background:transparent;">Clear History</button>`;
     appList.appendChild(header);
 
-    clearBtn.addEventListener("click", () => {
+    const clearBtn = document.getElementById("clearBtn");
+    clearBtn.onclick = () => {
+        // ADDED: TRIGGER SHAKE ANIMATION
         clearBtn.classList.add("clear-btn-active");
         setTimeout(() => {
-            downloadedApps = [];
             localStorage.removeItem("downloads");
             showDownloads();
-        }, 400);
-    });
+        }, 400); // Wait for animation to finish
+    };
 
-    if (downloadedApps.length === 0) {
-        const emptyDiv = document.createElement("div");
-        emptyDiv.style.cssText = "grid-column: 1/-1; padding: 40px; text-align: center; color: #64748b;";
-        emptyDiv.innerHTML = `<h3>No downloads yet</h3><p>Your recent downloads will appear here.</p>`;
-        appList.appendChild(emptyDiv);
+    let downloads = JSON.parse(localStorage.getItem("downloads")) || [];
+    if (downloads.length === 0) {
+        appList.innerHTML += `<p style="grid-column:1/-1; text-align:center; color:var(--text-sub); padding:40px;">No history found.</p>`;
         return;
     }
 
-    [...downloadedApps].reverse().forEach((name, index) => {
-        const originalCard = allApps.find(card => card.querySelector("h3").innerText === name);
-        if (originalCard) {
-            const clone = originalCard.cloneNode(true);
-            clone.style.display = "flex";
-            resetAnimation(clone, index);
-            appList.appendChild(clone);
+    downloads.reverse().forEach((name, i) => {
+        const match = allAndroidApps.find(c => c.querySelector("h3").innerText === name) || 
+                      windowsGamesData.find(g => g.name === name);
+        if (match) {
+            const card = match.nodeType ? match.cloneNode(true) : createWinCard(match);
+            card.style.display = "flex";
+            appList.appendChild(card);
+            resetAnimation(card, i);
         }
     });
 }
 
-// ================= APPROXIMATE SEARCH =================
-document.getElementById("search").addEventListener("input", function () {
-    const value = this.value.toLowerCase().trim(); // Trim to avoid issues with extra spaces
+// ================= SMART SEARCH =================
+searchInput.addEventListener("input", function() {
+    const query = this.value.toLowerCase().trim();
+    const cards = appList.querySelectorAll(".app-card");
     let delay = 0;
-
-    allApps.forEach(card => {
+    cards.forEach(card => {
         const title = card.querySelector("h3").innerText.toLowerCase();
-        // Uses .includes() so typing just "mini" finds "Mini Militia"
-        if (title.includes(value)) {
+        if (title.includes(query)) {
             card.style.display = "flex";
             resetAnimation(card, delay++);
         } else {
@@ -116,18 +142,18 @@ document.getElementById("search").addEventListener("input", function () {
     });
 });
 
-function renderApps(apps) {
-    appList.innerHTML = "";
-    apps.forEach((app, index) => {
-        app.style.display = "flex";
-        resetAnimation(app, index);
-        appList.appendChild(app);
-    });
-}
+// ================= TRACKER =================
+appList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("download-btn")) {
+        const name = e.target.closest(".app-card").querySelector("h3").innerText;
+        let downloads = JSON.parse(localStorage.getItem("downloads")) || [];
+        if(!downloads.includes(name)) downloads.push(name);
+        localStorage.setItem("downloads", JSON.stringify(downloads));
+    }
+});
 
-function resetAnimation(card, delay) {
-    card.style.animation = "none";
-    card.offsetHeight; 
-    card.style.animation = "fadeSlideUp 0.5s ease forwards";
-    card.style.animationDelay = `${delay * 0.07}s`;
-}
+function toggleMenu() { sideMenu.classList.add("active"); overlay.classList.add("active"); }
+function closeMenu() { sideMenu.classList.remove("active"); overlay.classList.remove("active"); }
+
+// Launch Home Tab by default
+showHome();
