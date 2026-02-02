@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gamestore | Featured</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="description" content="Gamestore - Download the best modded Android and PC games for free. Safe, fast, and tested mods with unlocked features.">
+    <meta name="keywords" content="Gamestore, modded games, android mods, pc games, free download, gta san andreas mod, geometry dash mod">
+    <meta name="author" content="Gamestore Team">
+    
+    <meta property="og:title" content="Gamestore | Featured">
+    <meta property="og:description" content="Get access to exclusive modded games and apps for Android and Windows.">
+    <meta property="og:type" content="website">
+    
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* SECURITY OVERLAY ANIMATION */
+        @keyframes captchaPop {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        #main-captcha {
+            animation: captchaPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* SECURITY OVERLAY */
+        #captcha-container {
+            position: fixed;
+            inset: 0;
+            background: #0f111a;
+            z-index: 9999;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* CARD ANIMATIONS (SAME AS GAME CARDS) */
+        .captcha-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(15px);
+            border-radius: var(--radius);
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+            transition: 
+                transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                box-shadow 0.3s ease, 
+                border-color 0.3s ease,
+                background 0.3s ease;
+        }
+
+        .captcha-card:hover {
+            transform: scale(1.04) translateY(-6px); 
+            background: rgba(45, 48, 75, 0.95);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Shine Sweep Effect from game cards */
+        .captcha-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(
+                to right,
+                transparent,
+                rgba(255, 255, 255, 0.08),
+                transparent
+            );
+            transform: skewX(-25deg);
+            transition: 0.5s ease-in-out;
+        }
+
+        .captcha-card:hover::after {
+            left: 130%;
+        }
+
+        .verify-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 18px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* NEW TICK STYLE */
+        .check-box {
+            width: 28px; 
+            height: 28px;
+            border: 2px solid var(--text-sub);
+            border-radius: 6px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Tilt effect on box when hovering card */
+        .captcha-card:hover .check-box {
+            transform: scale(1.1) rotate(5deg);
+            border-color: var(--accent);
+        }
+
+        #captcha-check { 
+            opacity: 0; 
+            color: #00ff88; /* Success Green */
+            font-size: 18px;
+            font-weight: 900;
+            transform: scale(0) rotate(-45deg);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); 
+        }
+
+        /* VERIFIED STATE */
+        .verified .check-box {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+            border-radius: 50%; /* Becomes a circle */
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .verified #captcha-check { 
+            opacity: 1; 
+            transform: scale(1.1) rotate(0deg); 
+        }
+
+        /* STYLISH MODERATED MENU BUTTON (42px) */
+        .stylish-menu-btn {
+            width: 42px; 
+            height: 42px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            cursor: pointer;
+            margin-right: 12px;
+            transition: all 0.3s ease;
+        }
+        .stylish-menu-btn:hover {
+            background: var(--primary);
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--neon-glow);
+            transform: translateY(-1px);
+        }
+        .stylish-menu-btn svg {
+            transition: 0.3s;
+        }
+        .stylish-menu-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* LEGAL FOOTER */
+        .legal-footer {
+            margin-top: 50px;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .legal-footer h4 { color: var(--accent); margin-bottom: 10px; }
+        .legal-footer p { color: var(--text-sub); font-size: 12px; max-width: 600px; margin: 0 auto; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<div id="captcha-container">
+    <div class="captcha-card" id="main-captcha">
+        <h2 style="margin: 0 0 8px; color: var(--text-main);">Security Check</h2>
+        <p style="color: var(--text-sub); margin-bottom: 25px;">Verify you are human</p>
+        <div class="verify-row" onclick="verifyCaptcha()">
+            <div class="check-box"><div id="captcha-check">✓</div></div>
+            <span style="font-weight: 600; color: var(--text-main);">I'm not a robot</span>
+        </div>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+<nav class="side-menu" id="sideMenu">
+    <div class="menu-header">
+        <div class="menu-brand">Menu</div>
+        <button class="icon-btn" onclick="closeMenu()">✕</button>
+    </div>
+    <div class="menu-links">
+        <a href="#" class="menu-item active">Home</a> 
+        <a href="#" class="menu-item">Android</a>
+        <a href="#" class="menu-item">Windows</a>
+        <div class="divider"></div>
+        <a href="#" class="menu-item">Downloads</a>
+    </div>
+</nav>
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <button class="stylish-menu-btn" onclick="toggleMenu()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="18" x2="14" y2="18"></line>
+            </svg>
+        </button>
+        <h1 class="logo">GAME<span class="logo-highlight">STORE</span></h1>
+        <div class="search-wrapper"><input type="text" id="search" placeholder="Search in this tab..."></div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="section-header">
+        <h2 id="section-title">All Games&Apps</h2>
+        <span class="badge">UNLOCKED FEATURES</span>
+    </div>
+
+    <div class="app-grid" id="appList">
+        <div class="app-card">
+            <div class="app-visual"><img src="img/dr.jpeg" alt="Dr Driving"></div>
+            <div class="app-details">
+                <h3>Dr. Driving</h3>
+                <span class="category">Android • Unlimited Money</span>
+                <div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZDACK5Z8FiklHwivV0mMwvGMRYHvhUrIAEy" class="download-btn" download>Download</a></div>
+            </div>
+        </div>
+        <div class="app-card">
+            <div class="app-visual"><img src="img/gtasan.png" alt="GTA San Andreas"></div>
+            <div class="app-details">
+                <h3>GTA San Andreas</h3>
+                <span class="category">Android • Unlimited Money</span>
+                <div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZYuxK5ZCKOxMQAIdzLH1aBpa1ePDRJ0jlQ7" class="download-btn" download>Download</a></div>
+            </div>
+        </div>
+        <div class="app-card">
+            <div class="app-visual"><img src="img/" alt="Unavailable"></div>
+            <div class="app-details"><h3>Unavailable</h3><span class="category">Android • ----</span><div class="actions"><a href="files/" class="download-btn" download>Download</a></div></div>
+        </div>
+        <div class="app-card">
+            <div class="app-visual"><img src="img/" alt="Unavailable"></div>
+            <div class="app-details"><h3>Unavailable</h3><span class="category">Android • ----</span><div class="actions"><a href="files/" class="download-btn" download>Download</a></div></div>
+        </div>
+        <div class="app-card">
+            <div class="app-visual"><img src="img/" alt="Unavailable"></div>
+            <div class="app-details"><h3>Unavailable</h3><span class="category">Android • ----</span><div class="actions"><a href="files/" class="download-btn" download>Download</a></div></div>
+        </div>
+        <div class="app-card">
+            <div class="app-visual"><img src="img/images.jpeg" alt="Geometry Dash"></div>
+            <div class="app-details">
+                <h3>Geometry Dash</h3>
+                <span class="category">Android • Orginal</span>
+                <div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZaACK5ZtV9KUt0Qnuu7gl2YtEjWgfrbQy1k" class="download-btn" download>Download</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="legal-footer">
+    <h4>⚖️ Legal Disclaimer</h4>
+    <p>Gamestore is a community-driven platform. We do not host files on our servers. All game content and trademarks belong to their respective owners. Content is for educational and research purposes only.</p>
+</footer>
+
+<script>
+function verifyCaptcha() {
+    document.getElementById("main-captcha").classList.add("verified");
+    localStorage.setItem('isHuman', 'true');
+    localStorage.setItem('humanExpiry', new Date().getTime() + (24 * 60 * 60 * 1000));
+    setTimeout(() => { 
+        const container = document.getElementById("captcha-container");
+        container.style.opacity = "0";
+        container.style.pointerEvents = "none";
+        setTimeout(() => { container.style.display = "none"; }, 800);
+    }, 1000); 
+}
+window.onload = () => { if(localStorage.getItem('isHuman')) document.getElementById("captcha-container").style.display = "none"; };
+</script>
+<script src="script.js"></script>
+</body>
+</html>
