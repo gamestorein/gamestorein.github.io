@@ -55,7 +55,7 @@ body {
     display: flex;
     align-items: center;
     padding: 0 20px;
-    gap: 15px;
+    gap: 1px;
 }
 
 .menu-btn {
@@ -86,7 +86,7 @@ body {
 .search-wrapper {
     position: relative;
     width: 100%;
-    max-width: 220px;
+    max-width: 125px;
 }
 
 #search {
