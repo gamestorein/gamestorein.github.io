@@ -17,7 +17,7 @@ const windowsGamesData = [
     },
     {
         name: "Unavailable",
-        category: "WINDOWS • ----",
+        category: "MAC OS • ----",
         img: "img/",
         link: "files/"
     },
