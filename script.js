@@ -11,13 +11,13 @@ const allAndroidApps = Array.from(document.querySelectorAll(".app-card"));
 const windowsGamesData = [
     {
         name: "Unavailable",
-        category: "Windows • ----",
+        category: "WINDOWS • ----",
         img: "img/",
         link: "files/"
     },
     {
         name: "Unavailable",
-        category: "Windows • ----",
+        category: "WINDOWS • ----",
         img: "img/",
         link: "files/"
     },
