@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <title>Gamestore | Featured</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="description" content="Gamestore - Download the best modded Android and PC games for free. Safe, fast, and tested mods with unlocked features.">
+    <meta name="keywords" content="Gamestore, modded games, android mods, pc games, free download, gta san andreas mod, geometry dash mod">
+    <meta name="author" content="Gamestore Team">
+    
+    <meta property="og:title" content="Gamestore | Featured">
+    <meta property="og:description" content="Get access to exclusive modded games and apps for Android and Windows.">
+    <meta property="og:type" content="website">
+    
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -157,6 +166,17 @@
         .stylish-menu-btn:active {
             transform: scale(0.92);
         }
+
+        /* LEGAL FOOTER */
+        .legal-footer {
+            margin-top: 50px;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .legal-footer h4 { color: var(--accent); margin-bottom: 10px; }
+        .legal-footer p { color: var(--text-sub); font-size: 12px; max-width: 600px; margin: 0 auto; line-height: 1.5; }
     </style>
 </head>
 <body>
@@ -211,11 +231,19 @@
     <div class="app-grid" id="appList">
         <div class="app-card">
             <div class="app-visual"><img src="img/dr.jpeg" alt="Dr Driving"></div>
-            <div class="app-details"><h3>Dr. Driving</h3><span class="category">Android • Unlimited Money</span><div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZDACK5Z8FiklHwivV0mMwvGMRYHvhUrIAEy" class="download-btn" download>Download</a></div></div>
+            <div class="app-details">
+                <h3>Dr. Driving</h3>
+                <span class="category">Android • Unlimited Money</span>
+                <div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZDACK5Z8FiklHwivV0mMwvGMRYHvhUrIAEy" class="download-btn" download>Download</a></div>
+            </div>
         </div>
         <div class="app-card">
             <div class="app-visual"><img src="img/gtasan.png" alt="GTA San Andreas"></div>
-            <div class="app-details"><h3>GTA San Andreas</h3><span class="category">Android • Unlimited Money</span><div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZYuxK5ZCKOxMQAIdzLH1aBpa1ePDRJ0jlQ7" class="download-btn" download>Download</a></div></div>
+            <div class="app-details">
+                <h3>GTA San Andreas</h3>
+                <span class="category">Android • Unlimited Money</span>
+                <div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZYuxK5ZCKOxMQAIdzLH1aBpa1ePDRJ0jlQ7" class="download-btn" download>Download</a></div>
+            </div>
         </div>
         <div class="app-card">
             <div class="app-visual"><img src="img/" alt="Unavailable"></div>
@@ -231,10 +259,19 @@
         </div>
         <div class="app-card">
             <div class="app-visual"><img src="img/images.jpeg" alt="Geometry Dash"></div>
-            <div class="app-details"><h3>Geometry Dash</h3><span class="category">Android • Orginal</span><div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZaACK5ZtV9KUt0Qnuu7gl2YtEjWgfrbQy1k" class="download-btn" download>Download</a></div></div>
+            <div class="app-details">
+                <h3>Geometry Dash</h3>
+                <span class="category">Android • Orginal</span>
+                <div class="actions"><a href="https://u.pcloud.link/publink/show?code=XZaACK5ZtV9KUt0Qnuu7gl2YtEjWgfrbQy1k" class="download-btn" download>Download</a></div>
+            </div>
         </div>
     </div>
 </div>
+
+<footer class="legal-footer">
+    <h4>⚖️ Legal Disclaimer</h4>
+    <p>Gamestore is a community-driven platform. We do not host files on our servers. All game content and trademarks belong to their respective owners. Content is for educational and research purposes only.</p>
+</footer>
 
 <script>
 function verifyCaptcha() {
@@ -246,7 +283,7 @@ function verifyCaptcha() {
         container.style.opacity = "0";
         container.style.pointerEvents = "none";
         setTimeout(() => { container.style.display = "none"; }, 800);
-    }, 1000); // Wait for tick animation to finish
+    }, 1000); 
 }
 window.onload = () => { if(localStorage.getItem('isHuman')) document.getElementById("captcha-container").style.display = "none"; };
 </script>
