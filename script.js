@@ -7,25 +7,41 @@ const searchInput = document.getElementById("search");
 // Initial capture of Android apps from the HTML
 const allAndroidApps = Array.from(document.querySelectorAll(".app-card"));
 
-// Windows Game Database
+// Windows Game Database - Ensure you add data-downloads here too
 const windowsGamesData = [
     {
         name: "Unavailable",
         category: "WINDOWS • ----",
         img: "img/",
-        link: "files/"
+        link: "files/",
+        downloads: 500 // Added download data for sorting
     },
     {
         name: "Unavailable",
-        category: "WINDOWS • ----",
+        category: "Windows • ----",
         img: "img/",
         link: "files/"
     },
+    
 ];
+
+// Helper to sort elements in the appList
+function sortCards() {
+    const cards = Array.from(appList.querySelectorAll(".app-card"));
+    cards.sort((a, b) => {
+        const countA = parseInt(a.dataset.downloads) || 0;
+        const countB = parseInt(b.dataset.downloads) || 0;
+        return countB - countA; // Descending order
+    });
+    // Re-append in sorted order
+    cards.forEach(card => appList.appendChild(card));
+}
 
 function createWinCard(game) {
     const card = document.createElement("div");
     card.className = "app-card";
+    // Set the data attribute for the sorting function to read
+    card.setAttribute("data-downloads", game.downloads || 0); 
     card.innerHTML = `
         <div class="app-visual"><img src="${game.img}" alt="${game.name}"></div>
         <div class="app-details">
@@ -62,37 +78,50 @@ menuItems.forEach(item => {
 });
 
 function showHome() {
-    sectionTitle.innerText = "All Games&Apps";
+    sectionTitle.innerText = "All Games & Apps";
     appList.innerHTML = "";
-    allAndroidApps.forEach((app, i) => { app.style.display = "flex"; appList.appendChild(app); resetAnimation(app, i); });
-    windowsGamesData.forEach((game, i) => {
-        const card = createWinCard(game);
-        appList.appendChild(card);
-        resetAnimation(card, allAndroidApps.length + i);
+    
+    // Add Android apps
+    allAndroidApps.forEach(app => appList.appendChild(app));
+    
+    // Add Windows apps
+    windowsGamesData.forEach(game => appList.appendChild(createWinCard(game)));
+
+    // SORT AND ANIMATE
+    sortCards(); 
+    Array.from(appList.children).forEach((card, i) => {
+        card.style.display = "flex";
+        resetAnimation(card, i);
     });
 }
 
 function showAndroid() {
-    sectionTitle.innerText = "📱 Games&Apps";
+    sectionTitle.innerText = "📱 Games & Apps";
     appList.innerHTML = "";
-    allAndroidApps.forEach((app, i) => { app.style.display = "flex"; appList.appendChild(app); resetAnimation(app, i); });
+    allAndroidApps.forEach(app => appList.appendChild(app));
+    
+    sortCards();
+    Array.from(appList.children).forEach((app, i) => { 
+        app.style.display = "flex"; 
+        resetAnimation(app, i); 
+    });
 }
 
 function showWindows() {
-    sectionTitle.innerText = "💻 Games&Apps";
+    sectionTitle.innerText = "💻 Games & Apps";
     appList.innerHTML = "";
-    windowsGamesData.forEach((game, i) => {
-        const card = createWinCard(game);
-        appList.appendChild(card);
+    windowsGamesData.forEach(game => appList.appendChild(createWinCard(game)));
+    
+    sortCards();
+    Array.from(appList.children).forEach((card, i) => {
         resetAnimation(card, i);
     });
 }
 
 function showDownloads() {
-    sectionTitle.innerText = "Top Downloads";
+    sectionTitle.innerText = "Download History";
     appList.innerHTML = "";
 
-    // Header for Clear Button
     const header = document.createElement("div");
     header.style.cssText = "grid-column: 1/-1; display:flex; justify-content:flex-end; padding-bottom: 20px;";
     header.innerHTML = `<button class="badge" id="clearBtn" style="cursor:pointer; border:1px solid var(--accent); background:transparent;">Clear History</button>`;
@@ -100,12 +129,11 @@ function showDownloads() {
 
     const clearBtn = document.getElementById("clearBtn");
     clearBtn.onclick = () => {
-        // ADDED: TRIGGER SHAKE ANIMATION
         clearBtn.classList.add("clear-btn-active");
         setTimeout(() => {
             localStorage.removeItem("downloads");
             showDownloads();
-        }, 400); // Wait for animation to finish
+        }, 400);
     };
 
     let downloads = JSON.parse(localStorage.getItem("downloads")) || [];
@@ -155,5 +183,4 @@ appList.addEventListener("click", (e) => {
 function toggleMenu() { sideMenu.classList.add("active"); overlay.classList.add("active"); }
 function closeMenu() { sideMenu.classList.remove("active"); overlay.classList.remove("active"); }
 
-// Launch Home Tab by default
 showHome();
